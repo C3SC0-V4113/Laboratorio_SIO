@@ -7,7 +7,7 @@
 
 int main()
 {
-    int fd;
+    int fd, flag = 0;
 
     // Dirección del archivo FIFO
     char *mififo = "/tmp/mififo";
@@ -15,24 +15,38 @@ int main()
     // Crear archivo FIFO
     mkfifo(mififo, 0666);
     char arr1[80], arr2[80];
-    while (1)
+    printf("*** Tarea Guia 3 ***\n");
+    printf("Pulse 'q' para salir\n");
+    do
     {
         // Abrir la FIFO solo para escribir
         fd = open(mififo, O_WRONLY);
         // Obtiene un input del usuario de longuitud máxima de 80
+        printf("Ingrese la palabra a verificar: ");
         fgets(arr2, 80, stdin);
-        // Escribe el input en la FIFO y lo cierra
-        write(fd, arr2, strlen(arr2) + 1);
-        close(fd);
+        // Revisa que se pulse q para salirse
+        if (*arr2 == 'q')
+        {
+            flag = 1;
+        }
+        else
+        {
+            // Escribe el input en la FIFO y lo cierra
+            write(fd, arr2, strlen(arr2) + 1);
+            close(fd);
 
-        // Abrir FIFO en solo lectura
-        fd = open(mififo, O_RDONLY);
-        // Leer FIFO
-        read(fd, arr1, sizeof(arr1));
+            // Abrir FIFO en solo lectura
+            fd = open(mififo, O_RDONLY);
+            // Leer FIFO
+            read(fd, arr1, sizeof(arr1));
 
-        // Leer el mensaje
-        printf("Aver: %s\n", arr1);
-        close(fd);
-    }
+            // Leer el mensaje
+            printf("la palabra %s", arr2);
+            printf("%s", arr1);
+            printf("\n\n");
+            close(fd);
+        }
+    } while (flag == 0);
+    printf("Finalizando la aplicación\n");
     return 0;
 }
